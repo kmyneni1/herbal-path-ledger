@@ -13,16 +13,19 @@ import { RoleSelector } from "@/components/RoleSelector";
 import { ProvenanceTimeline } from "@/components/ProvenanceTimeline";
 import { TraceabilityMap } from "@/components/TraceabilityMap";
 import { QRGenerator } from "@/components/QRGenerator";
+import { HerbInfo } from "@/components/HerbInfo";
 
 import { UserRole, Batch, CollectionEvent, ProcessingStep, QualityTest, Provenance } from "@/types/blockchain";
 import { BlockchainService } from "@/lib/blockchain";
-import { ArrowLeft, Plus, Search, FileText, MapPin, Clock, QrCode } from "lucide-react";
+import { ArrowLeft, Plus, Search, FileText, MapPin, Clock, QrCode, Info } from "lucide-react";
 
 export default function Dashboard() {
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [batches, setBatches] = useState<Batch[]>([]);
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
+  const [herbInfoOpen, setHerbInfoOpen] = useState(false);
+  const [selectedHerbSpecies, setSelectedHerbSpecies] = useState<string>("");
 
   // Form states
   const [collectionForm, setCollectionForm] = useState({
@@ -286,6 +289,17 @@ export default function Dashboard() {
                         <Badge variant="outline" className="capitalize">
                           {batch.status}
                         </Badge>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedHerbSpecies(batch.species);
+                            setHerbInfoOpen(true);
+                          }}
+                        >
+                          <Info className="w-4 h-4 mr-1" />
+                          View Info
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
@@ -663,6 +677,13 @@ export default function Dashboard() {
           </TabsContent>
         </Tabs>
       </div>
+      
+      {/* Herb Info Dialog */}
+      <HerbInfo 
+        species={selectedHerbSpecies}
+        isOpen={herbInfoOpen}
+        onClose={() => setHerbInfoOpen(false)}
+      />
     </div>
   );
 }
